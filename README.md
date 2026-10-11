@@ -9,9 +9,8 @@ The project simulates train movement between two stations and demonstrates how t
 
 ## 🌐 Live Demo & GitHub Repository
 
-- 🌍 **Live Website:** [RailGuard AI](https://your-username.github.io/RailGuard-AI/)
-- 💻 **GitHub Repository:** [View Source Code](https://github.com/your-username/RailGuard-AI)
-
+- 🌍 **Live Website:** https://sucharita98756-cloud.github.io/RailGuard-AI/
+- 💻 **GitHub Repository:** https://github.com/sucharita98756-cloud/RailGuard-AI
 > Replace `your-username` with your GitHub username. The live demo link will work after GitHub Pages is enabled and the website is published.
 
 ## ✨ Features
