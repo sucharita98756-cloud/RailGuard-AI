@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f2f2f2;
+}
+
+h1 {
+    margin-top: 30px;
+}
+
+.railway {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 80px;
+}
+
+.station {
+    font-size: 40px;
+}
+
+.station p {
+    font-size: 16px;
+}
+
+.track {
+    width: 250px;
+    height: 80px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+    position: relative;
+}
+
+#train {
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    font-size: 35px;
+}
+
+.signal {
+    font-size: 30px;
+}
+
+#signalLight {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: red;
+    margin: auto;
+}
+
+.signal p {
+    font-size: 14px;
+}
+
+.crossing {
+    font-size: 30px;
+}
+
+#gate {
+    width: 70px;
+    height: 10px;
+    background: brown;
+    margin: auto;
+}
+
+.crossing p {
+    font-size: 14px;
+}
+
+button {
+    margin-top: 50px;
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.status {
+    margin: 40px auto;
+    padding: 20px;
+    width: 350px;
+    background: white;
+    border-radius: 10px;
+}
+
+.status span {
+    font-weight: bold;
+}

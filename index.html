@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Railway Traffic & Level Crossing Safety System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 8px 0 0;
+            color: #cbd5e1;
+        }
+
+        .railway-area {
+            width: 90%;
+            max-width: 1200px;
+            height: 300px;
+            margin: 35px auto 25px;
+            background: white;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .station {
+            position: absolute;
+            top: 65px;
+            text-align: center;
+            font-size: 42px;
+            font-weight: bold;
+        }
+
+        .station p {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        #stationA {
+            left: 5%;
+        }
+
+        #stationB {
+            right: 5%;
+        }
+
+        .track {
+            position: absolute;
+            left: 16%;
+            right: 16%;
+            top: 120px;
+            height: 80px;
+            border-top: 6px solid #222;
+            border-bottom: 6px solid #222;
+        }
+
+        .rail-crossing {
+            position: absolute;
+            left: 67%;
+            top: 95px;
+            width: 100px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        #gate {
+            width: 80px;
+            height: 10px;
+            background: #16a34a;
+            margin: auto;
+            transition: 0.3s;
+        }
+
+        #crossingText {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+       #train {
+    position: absolute;
+    left: 0;
+    top: 17px;
+    font-size: 38px;
+    z-index: 10;
+    transition: left 0.05s linear;
+}
+
+        .signal {
+            position: absolute;
+            left: 55%;
+            top: 35px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #signalLight {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: red;
+            border: 2px solid #111;
+            margin: auto;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 25px;
+        }
+
+        button {
+            border: none;
+            padding: 14px 25px;
+            margin: 6px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .start {
+            background: #16a34a;
+            color: white;
+        }
+
+        .obstacle {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .clear {
+            background: #2563eb;
+            color: white;
+        }
+
+        .failure {
+            background: #dc2626;
+            color: white;
+        }
+
+        .reset {
+            background: #64748b;
+            color: white;
+        }
+
+        .dashboard {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .ai-panel {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto 40px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .ai-panel h2 {
+            margin-top: 0;
+        }
+
+        #riskScore {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        #aiDecision {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        /* =========================
+   LIVE TRAIN PROGRESS
+   ========================= */
+
+.progress-panel {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.progress-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.progress-labels {
+    position: relative;
+    height: 25px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.progress-labels span:first-child {
+    position: absolute;
+    left: 0;
+}
+
+.progress-labels span:last-child {
+    position: absolute;
+    right: 0;
+}
+
+.progress-labels .crossing-label {
+    position: absolute;
+    left: 67%;
+    transform: translateX(-50%);
+}
+
+.progress-track {
+    height: 14px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    position: relative;
+}
+
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: #16a34a;
+    border-radius: 10px;
+    transition: width 0.1s linear;
+}
+
+#progressTrain {
+    position: absolute;
+    top: -18px;
+    left: 0%;
+    font-size: 25px;
+    transform: translateX(-50%);
+    transition: left 0.1s linear;
+}
+
+.progress-status {
+    margin-top: 18px;
+    font-weight: bold;
+}
+
+#progressText {
+    color: #2563eb;
+}
+/* =========================
+   AI RISK BAR
+   ========================= */
+
+.risk-bar-container {
+    width: 100%;
+    height: 18px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0 20px;
+}
+
+#riskBar {
+    width: 10%;
+    height: 100%;
+    background: #16a34a;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+/* =========================
+   EMERGENCY EVENT LOG
+   ========================= */
+
+.event-log {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto 40px;
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.event-log h2 {
+    margin-top: 0;
+}
+
+#eventLog {
+    max-height: 220px;
+    overflow-y: auto;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+#eventLog p {
+    margin: 6px 0;
+    padding: 8px;
+    border-left: 4px solid #2563eb;
+    background: white;
+    font-size: 14px;
+}
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🚆 AI Railway Traffic & Level Crossing Safety System</h1>
+    <p>AI-Based Train Monitoring, Risk Prediction & Emergency Control</p>
+</header>
+
+
+<!-- ================= RAILWAY ================= -->
+
+<div class="railway-area">
+
+    <div class="station" id="stationA">
+        🏢
+        <p>Station A</p>
+    </div>
+
+    <div class="track">
+
+        <div id="train">🚆</div>
+
+    </div>
+
+
+    <div class="signal">
+
+        <div id="signalLight"></div>
+
+        <div>Signal</div>
+
+    </div>
+
+
+    <div class="rail-crossing">
+
+        <div id="gate"></div>
+
+        <div>🚧 Level Crossing</div>
+
+        <div id="crossingText">CLEAR</div>
+
+    </div>
+
+
+    <div class="station" id="stationB">
+        🏢
+        <p>Station B</p>
+    </div>
+
+</div>
+
+<!-- ================= LIVE TRAIN PROGRESS ================= -->
+
+<div class="progress-panel">
+
+    <div class="progress-title">
+        🚆 Live Train Journey
+    </div>
+<div class="progress-labels">
+    <span>Station A</span>
+    <span class="crossing-label">Level Crossing</span>
+    <span>Station B</span>
+</div>
+    <div class="progress-track">
+
+        <div id="progressBar"></div>
+
+        <div id="progressTrain">🚆</div>
+
+    </div>
+
+    <div class="progress-status">
+        Train Position:
+        <span id="progressText">Station A</span>
+    </div>
+
+</div>
+<!-- ================= BUTTONS ================= -->
+
+<div class="controls">
+
+    <button class="start" onclick="startTrain()">
+        🚆 START TRAIN
+    </button>
+
+    <button class="obstacle" onclick="simulateObstacle()">
+        🚗 SIMULATE OBSTACLE
+    </button>
+
+    <button class="clear" onclick="clearObstacle()">
+        ✅ CLEAR OBSTACLE
+    </button>
+
+    <button class="failure" onclick="simulateGateFailure()">
+        🚨 SIMULATE GATE FAILURE
+    </button>
+
+    <button class="reset" onclick="resetSystem()">
+        🔄 RESET SYSTEM
+    </button>
+
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<div class="dashboard">
+
+    <div class="card">
+        <h3>Train Status</h3>
+        <div class="value" id="trainStatus">
+            WAITING
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>Speed</h3>
+        <div class="value">
+            <span id="speed">0</span> km/h
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>Distance to Crossing</h3>
+        <div class="value">
+            <span id="distance">5.0</span> km
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>ETA</h3>
+        <div class="value">
+            <span id="eta">5</span> min
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>Signal</h3>
+        <div class="value" id="signalStatus">
+            RED
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>Gate</h3>
+        <div class="value" id="gateStatus">
+            OPEN
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>Warning</h3>
+        <div class="value" id="warningStatus">
+            NORMAL
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h3>Emergency</h3>
+        <div class="value" id="emergencyStatus">
+            NORMAL
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ================= AI ================= -->
+
+<div class="ai-panel">
+
+    <h2>🤖 AI Risk Analysis</h2>
+
+   <p>
+    Risk Score:
+    <span id="riskScore">10%</span>
+</p>
+
+<div class="risk-bar-container">
+    <div id="riskBar"></div>
+</div>
+
+    <p>
+        Risk Level:
+        <span id="riskLevel">LOW</span>
+    </p>
+
+    <p>
+        AI Decision:
+        <span id="aiDecision">
+            TRAIN CAN PROCEED
+        </span>
+    </p>
+
+</div>
+<div class="event-log">
+
+    <h2>📋 Emergency Event Log</h2>
+
+    <div id="eventLog">
+        <p>System initialized. Waiting for train...</p>
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
